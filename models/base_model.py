@@ -13,9 +13,12 @@ class BaseModel:
                 id: it has the id generated using uuid version 4.
                 created_at: it has the current datetime.
                 updated_at: it update the current dattime. """
-        self.id = str(uuid.uuid4())
-        self.created_at = datetime.datetime.today()
         self.updated_at = datetime.datetime.now()
+        if not kwargs:
+            self.id = str(uuid.uuid4())
+            self.created_at = datetime.datetime.today()
+        else:
+            for key, value in kwargs.items()
 
     def __str__(self):
         """ return this format '[<class name>] (<self.id>) <self.__dict__>'"""
