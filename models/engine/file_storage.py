@@ -23,7 +23,12 @@ class FileStorage(BaseModel):
             json.dump(objdict, f)
 
     def reload(self):
-        if with open(FileStorage.__file_path, 'r') as f:
-            data = json.load(f)
-            FileStorage.__objects += data
-
+        try:
+            with open(FileStorage.__file_path) as fl:
+                objdict = json.load(fl)
+                for obj in objdict.values():
+                    cls_name = o["__class__"]
+                    del obj["__class__"]
+                    self.new(eval(cls_name)(**obj))
+        except FileNotFoundError:
+            return
