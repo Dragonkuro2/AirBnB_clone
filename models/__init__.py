@@ -1,5 +1,5 @@
 #!/usr/bin/python3
-""" __init__ method that inisialize models directory. """
+"""Module that executes each time that models package is imported"""
 from models.engine.file_storage import FileStorage
 
 

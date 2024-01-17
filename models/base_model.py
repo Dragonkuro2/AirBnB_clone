@@ -1,48 +1,55 @@
 #!/usr/bin/python3
-""" BaseModel file. """
+"""This file contain the parent class BaseModel"""
+
 import uuid
-import datetime
+from datetime import datetime
+import models
 
 
 class BaseModel:
-    """ a class BaseModel that defines all common attributes/methods
-        for other classes. """
+    """BaseModel class"""
     def __init__(self, *args, **kwargs):
-        """ initialize the elements.
-            args:
-                id: it has the id generated using uuid version 4.
-                created_at: it has the current datetime.
-                updated_at: it update the current dattime. """
-        self.updated_at = datetime.datetime.now()
-
-        if not kwargs:
-            self.id = str(uuid.uuid4())
-            self.created_at = datetime.datetime.today()
-        else:
+        """
+        __init__ constructor method of the class
+        """
+        if kwargs != {}:
             for key, value in kwargs.items():
-                if key == "__class__":
-                    continue
                 if key == "created_at" or key == "updated_at":
-                    self.__dict__[key] = datetime.datetime.strptime(value, "%Y-%m-%dT%H:%M:%S.%f")
-                else:
-                    self.__dict__[key] = value
-
-
+                    val = datetime.strptime(value, "%Y-%m-%dT%H:%M:%S.%f")
+                    setattr(self, key, val)
+                    continue
+                if key != "__class__":
+                    setattr(self, key, value)
+        else:
+            self.id = str(uuid.uuid4())
+            self.created_at = datetime.now()
+            self.updated_at = datetime.now()
+            models.storage.new(self)
 
     def __str__(self):
-        """ return this format '[<class name>] (<self.id>) <self.__dict__>'"""
-        cls = self.__class__.__name__
-        return f"[{cls}] ({self.id}) {self.__dict__}"
+        """__str__ method that returns string representation of the instance
+        Returns:
+        [str]: instance of BaseModel string representation"""
+        st = "[{:s}] ({:s}) {}"
+        return st.format(type(self).__name__, self.id, self.__dict__)
 
     def save(self):
-        """ update the datetime with the current datetime. """
-        self.updated_at = datetime.datetime.today()
+        """
+        save method that saves instance information in JSON file
+        """
+        self.updated_at = datetime.now()
+        models.storage.save()
 
     def to_dict(self):
-        """ returns a dictionary containing all keys/values
-        of __dict__ of the instance. """
-        r_dict = self.__dict__.copy()
-        r_dict['__class__'] = self.__class__.__name__
-        r_dict['created_at'] = self.created_at.isoformat()
-        r_dict['updated_at'] = self.updated_at.isoformat()
-        return r_dict
+        """
+        to_dict method that return dictionary representation of the instance
+
+        Returns:
+            [dict]: dictionary with information about the BaseModel instance
+        """
+        new = dict(self.__dict__)
+        new["__class__"] = type(self).__name__
+        new["created_at"] = new["created_at"].isoformat()
+        new["updated_at"] = new["updated_at"].isoformat()
+
+        return new
