@@ -1,0 +1,16 @@
+footer {
+	background-color: #FFFFFF;
+	height: 60px;
+	width: 100%;
+	display: flex;
+	bottom: 0;
+	position: fixed;
+	align-items: center;
+	justify-content: center;
+	border-top: SOLID 1px #CCCCCC;
+}
+
+footer p {
+	text-align: center;
+	margin: 0px;
+}
